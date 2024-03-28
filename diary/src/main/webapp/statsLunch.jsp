@@ -86,6 +86,7 @@
 					<a class="text-white fs-4 " href="/diary/diary.jsp">Calenar</a>
 					<a class="ms-5 text-white fs-4 " href="/diary/diaryList.jsp">List</a>
 					<a class="ms-5 text-white fs-4 " href="/diary/addDiaryForm.jsp">Write</a>
+					<a class="ms-5 text-white fs-4 " href="/diary/lunchOne.jsp">Lunch</a>
 				</div>
 			</div>
 			<div class="col">
@@ -123,7 +124,7 @@
 							int h = maxHeight *  rs2.getInt("cnt") / totalCnt;
 					%>
 							<td style="vertical-align: bottom">
-								<div style="height: <%=h %>px; background-color: <%=c[i] %>; text-align: center;">
+								<div style="height: <%=h %>px; width: 40px; background-color: <%=c[i] %>; text-align: center;">
 									<%=rs2.getInt("cnt") %>
 								</div>
 							</td>	
@@ -147,6 +148,11 @@
 		</div>
 		<div class="col"></div>
 	</div>
-
+	<%
+		//자원반납
+		rs2.close();
+		stmt2.close();
+		conn.close();
+	%>
 </body>
 </html>
