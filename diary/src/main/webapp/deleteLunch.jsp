@@ -56,4 +56,8 @@
 		response.sendRedirect("/diary/lunchOne.jsp?lunchDate=" + lunchDate);
 	}
 	
+	//자원반납
+	stmt2.close();
+	conn.close();
+	
 %>
