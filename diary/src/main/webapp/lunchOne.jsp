@@ -117,7 +117,7 @@
 			%>
 			
 			<div class="mb-4">
-					<a href="/diary/deleteDiary.jsp?lunchDate=<%=lunchDate%>" class="mt-3 btn" style="background-color: #A3C6C4">삭제</a>
+					<a href="/diary/deleteLunch.jsp?lunchDate=<%=lunchDate%>" class="mt-3 btn" style="background-color: #A3C6C4">삭제</a>
 			</div>
 		</div>
 		<div class="col"></div>
