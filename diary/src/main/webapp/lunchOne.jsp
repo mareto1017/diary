@@ -48,6 +48,7 @@
 	ResultSet rs2 = null;
 	rs2 = stmt2.executeQuery();
 	
+	
 %>
 <!DOCTYPE html>
 <html>
@@ -112,13 +113,26 @@
 				if(rs2.next()){
 			%>
 					<div><%=lunchDate %>의 점심 : <%=rs2.getString("menu") %></div>
-			<%
-				}
-			%>
+			
 			
 			<div class="mb-4">
 					<a href="/diary/deleteLunch.jsp?lunchDate=<%=lunchDate%>" class="mt-3 btn" style="background-color: #A3C6C4">삭제</a>
 			</div>
+			<%
+				} else { // rs2.next()결과 값이 없으면 메뉴가 입력되지않은거. 그래서 메뉴 입력창을 띄움
+			%>
+					<form method="post" action="/diary/insertLunch.jsp">
+						<input type="hidden" name="lunchDate" value="<%=lunchDate %>">
+						<input type="radio" name="menu" value="한식">한식
+						<input type="radio" name="menu" value="일식">일식
+						<input type="radio" name="menu" value="중식">중식
+						<input type="radio" name="menu" value="양식">양식
+						<input type="radio" name="menu" value="기타">기타
+						<button type="submit">입력</button>
+					</form>
+			<%
+				}
+			%>
 		</div>
 		<div class="col"></div>
 	</div>
