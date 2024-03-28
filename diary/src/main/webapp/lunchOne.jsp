@@ -1,3 +1,6 @@
+<%@page import="java.time.format.DateTimeFormatter"%>
+<%@page import="java.time.LocalDate"%>
+<%@page import="java.util.Calendar"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*" %>
@@ -40,15 +43,22 @@
 	//디버깅
 	System.out.println(lunchDate + " <-- lunchOne param lunchDate");
 	
+	//lunchDate가 null일 경우 lunchDate에 오늘 날짜 넣어주기
+	if(lunchDate == null){
+		LocalDate now = LocalDate.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		String today = now.format(formatter);
+		lunchDate = today;
+	}
 	String sql2 = "select menu from lunch where lunch_date = ?";
 	PreparedStatement stmt2 = null;
 	stmt2 = conn.prepareStatement(sql2);
 	stmt2.setString(1, lunchDate);
-	System.out.println(stmt);
+	System.out.println(stmt2);
 	ResultSet rs2 = null;
 	rs2 = stmt2.executeQuery();
 	
-	
+ 	
 %>
 <!DOCTYPE html>
 <html>
