@@ -86,6 +86,7 @@
 					<a class="ms-5 text-white fs-4 " href="/diary/diaryList.jsp">List</a>
 					<a class="ms-5 text-white fs-4 " href="/diary/addDiaryForm.jsp">Write</a>
 					<a class="ms-5 text-white fs-4 " href="/diary/lunchOne.jsp">Lunch</a>
+					<a class="ms-5 text-white fs-4 " href="/diary/statsLunch.jsp">Stats</a>
 				</div>
 			</div>
 			<div class="col">

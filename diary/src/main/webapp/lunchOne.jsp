@@ -88,6 +88,10 @@
 	header a:hover {
 		text-decoration: underline;
 	}
+	
+	input[type = radio] {
+		margin : 10px;
+	}
 </style>
 </head>
 <body class="container">
@@ -102,6 +106,7 @@
 					<a class="ms-5 text-white fs-4 " href="/diary/diaryList.jsp">List</a>
 					<a class="ms-5 text-white fs-4 " href="/diary/addDiaryForm.jsp">Write</a>
 					<a class="ms-5 text-white fs-4 " href="/diary/lunchOne.jsp">Lunch</a>
+					<a class="ms-5 text-white fs-4 " href="/diary/statsLunch.jsp">Stats</a>
 				</div>
 			</div>
 			<div class="col">
@@ -114,16 +119,21 @@
 	</header>
 	<div class="row">
 		<div class="col"></div>
-		<div class="mt-5 col-7 bg-white rounded">
+		<div class="mt-5 col-5 bg-white rounded">
 			<form method="get" action="/diary/lunchOne.jsp">
-				<input type="date" name="lunchDate" value="<%=lunchDate %>">
-				<button type="submit">검색</button>
+				<div class="mt-3">
+					<input type="date" name="lunchDate" value="<%=lunchDate %>">
+					<button type="submit" class="btn" style="background-color: #A3C6C4">검색</button>
+				</div>
 			</form>
 			
 			<%
 				if(rs2.next()){
 			%>
-					<div><%=lunchDate %>의 점심 : <%=rs2.getString("menu") %></div>
+					<div class="mt-4 text-center">
+						<div><h1><%=lunchDate %> 의 점심 </h1></div>
+						<div class="mt-5 mb-5"><h2><%=rs2.getString("menu") %></h2></div>
+					</div>
 			
 			
 			<div class="mb-4">
@@ -134,12 +144,14 @@
 			%>
 					<form method="post" action="/diary/insertLunch.jsp">
 						<input type="hidden" name="lunchDate" value="<%=lunchDate %>">
-						<input type="radio" name="menu" value="한식">한식
-						<input type="radio" name="menu" value="일식">일식
-						<input type="radio" name="menu" value="중식">중식
-						<input type="radio" name="menu" value="양식">양식
-						<input type="radio" name="menu" value="기타">기타
-						<button type="submit">입력</button>
+						<div class="mt-3" style="text-align: center;">
+							<div><input type="radio" name="menu" value="한식">한식</div>
+							<div><input type="radio" name="menu" value="일식">일식</div>
+							<div><input type="radio" name="menu" value="중식">중식</div>
+							<div><input type="radio" name="menu" value="양식">양식</div>
+							<div><input type="radio" name="menu" value="기타">기타</div>
+						</div>
+						<button type="submit" class="mb-4 mt-3 btn" style="background-color: #A3C6C4">입력</button>
 					</form>
 			<%
 				}

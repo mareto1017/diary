@@ -87,6 +87,7 @@
 					<a class="ms-5 text-white fs-4 " href="/diary/diaryList.jsp">List</a>
 					<a class="ms-5 text-white fs-4 " href="/diary/addDiaryForm.jsp">Write</a>
 					<a class="ms-5 text-white fs-4 " href="/diary/lunchOne.jsp">Lunch</a>
+					<a class="ms-5 text-white fs-4 " href="/diary/statsLunch.jsp">Stats</a>
 				</div>
 			</div>
 			<div class="col">
@@ -99,7 +100,7 @@
 	</header>
 	<div class="row">
 		<div class="col"></div>
-		<div class="mt-5 col-7 bg-white rounded">
+		<div class="mt-5 col-4 bg-white rounded" style="text-align: center;">
 			<%
 					int maxHeight = 300;
 					int totalCnt = 0;
@@ -107,11 +108,11 @@
 						totalCnt += rs2.getInt("cnt");
 					}
 			%>
-			<h1>statsLunch</h1>
+			<h1 class="mt-4">Stats Lunch</h1>
 			<div>
 				전체 득표수 : <%=totalCnt %>
 			</div>
-			<table>
+			<table class="mt-4 mb-4" style="display: inline-block;">
 				<tr>
 					<%
 					
