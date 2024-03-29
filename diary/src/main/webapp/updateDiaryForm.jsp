@@ -19,7 +19,7 @@
 	
 	System.out.println(diaryDate + "<-- modifyDiaryForm param diaryDate");
 	
-	String sql = "select title, weather, content from diary where diary_date = ?";
+	String sql = "select title, weather, content, feeling from diary where diary_date = ?";
 	
 	Class.forName("org.mariadb.jdbc.Driver");
 	Connection conn = DriverManager.getConnection("jdbc:mariadb://127.0.0.1:3306/diary", "root", "java1234");
@@ -100,21 +100,101 @@
 				</div>
 				<div class="mb-3">
 					Feel : 
-					<div class="form-check">
-				  		<input type="radio" class="form-check-input" name="feeling" value="&#128512;">&#128512;
-					</div>
-					<div class="form-check">
-					  	<input type="radio" class="form-check-input" name="feeling" value="&#128545;">&#128545;
-					</div>
-					<div class="form-check">
-					  	<input type="radio" class="form-check-input" name="feeling" value="&#128567;">&#128567;
-					</div>
-					<div class="form-check">
-					  	<input type="radio" class="form-check-input" name="feeling" value="&#128561;">&#128561;
-					</div>
-					<div class="form-check">
-					  	<input type="radio" class="form-check-input" name="feeling" value="&#128565;">&#128565;
-					</div>
+					<%
+						String feeling = rs.getString("feeling");
+						if (feeling.equals("&#128512;") || feeling.equals("😀")){
+					%>
+							<div class="form-check">
+						  		<input type="radio" class="form-check-input" name="feeling" value="&#128512;" checked="checked">&#128512;
+							</div>
+							<div class="form-check">
+							  	<input type="radio" class="form-check-input" name="feeling" value="&#128545;">&#128545;
+							</div>
+							<div class="form-check">
+							  	<input type="radio" class="form-check-input" name="feeling" value="&#128567;">&#128567;
+							</div>
+							<div class="form-check">
+							  	<input type="radio" class="form-check-input" name="feeling" value="&#128561;">&#128561;
+							</div>
+							<div class="form-check">
+							  	<input type="radio" class="form-check-input" name="feeling" value="&#128565;">&#128565;
+							</div>
+					<%
+						} else if (feeling.equals("&#128545;") || feeling.equals("😡")){
+					%>
+							<div class="form-check">
+						  		<input type="radio" class="form-check-input" name="feeling" value="&#128512;" >&#128512;
+							</div>
+							<div class="form-check">
+							  	<input type="radio" class="form-check-input" name="feeling" value="&#128545;" checked="checked">&#128545;
+							</div>
+							<div class="form-check">
+							  	<input type="radio" class="form-check-input" name="feeling" value="&#128567;">&#128567;
+							</div>
+							<div class="form-check">
+							  	<input type="radio" class="form-check-input" name="feeling" value="&#128561;">&#128561;
+							</div>
+							<div class="form-check">
+							  	<input type="radio" class="form-check-input" name="feeling" value="&#128565;">&#128565;
+							</div>
+					<%
+						} else if (feeling.equals("&#128567;") || feeling.equals("😷")){
+					%>
+							<div class="form-check">
+						  		<input type="radio" class="form-check-input" name="feeling" value="&#128512;" >&#128512;
+							</div>
+							<div class="form-check">
+							  	<input type="radio" class="form-check-input" name="feeling" value="&#128545;">&#128545;
+							</div>
+							<div class="form-check">
+							  	<input type="radio" class="form-check-input" name="feeling" value="&#128567;" checked="checked">&#128567;
+							</div>
+							<div class="form-check">
+							  	<input type="radio" class="form-check-input" name="feeling" value="&#128561;" >&#128561;
+							</div>
+							<div class="form-check">
+							  	<input type="radio" class="form-check-input" name="feeling" value="&#128565;">&#128565;
+							</div>
+					<%
+						} else if (feeling.equals("&#128561;") || feeling.equals("😱")){
+					%>
+							<div class="form-check">
+						  		<input type="radio" class="form-check-input" name="feeling" value="&#128512;" >&#128512;
+							</div>
+							<div class="form-check">
+							  	<input type="radio" class="form-check-input" name="feeling" value="&#128545;">&#128545;
+							</div>
+							<div class="form-check">
+							  	<input type="radio" class="form-check-input" name="feeling" value="&#128567;">&#128567;
+							</div>
+							<div class="form-check">
+							  	<input type="radio" class="form-check-input" name="feeling" value="&#128561;" checked="checked">&#128561;
+							</div>
+							<div class="form-check">
+							  	<input type="radio" class="form-check-input" name="feeling" value="&#128565;">&#128565;
+							</div>
+					<%
+						} else {
+					%>
+							<div class="form-check">
+						  		<input type="radio" class="form-check-input" name="feeling" value="&#128512;" >&#128512;
+							</div>
+							<div class="form-check">
+							  	<input type="radio" class="form-check-input" name="feeling" value="&#128545;">&#128545;
+							</div>
+							<div class="form-check">
+							  	<input type="radio" class="form-check-input" name="feeling" value="&#128567;">&#128567;
+							</div>
+							<div class="form-check">
+							  	<input type="radio" class="form-check-input" name="feeling" value="&#128561;" >&#128561;
+							</div>
+							<div class="form-check">
+							  	<input type="radio" class="form-check-input" name="feeling" value="&#128565;" checked="checked">&#128565;
+							</div>
+					<%
+						}
+					%>
+					
 				</div>
 			  	<div class="mb-3">
 			    	<label class="form-label">Title :</label>
