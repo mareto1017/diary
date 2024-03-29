@@ -4,52 +4,32 @@
 <%@page import="java.net.URLEncoder"%>
 <% 
 	//로그인(인증) 분기
-
-	String sql = "SELECT my_session mySession FROM login";
-	
-	Class.forName("org.mariadb.jdbc.Driver");
-	Connection conn = DriverManager.getConnection("jdbc:mariadb://127.0.0.1:3306/diary", "root", "java1234");
-	PreparedStatement stmt = null;
-	stmt = conn.prepareStatement(sql);
-	ResultSet rs = null;
-	rs = stmt.executeQuery();
-	
-	String mySession = null;
-	
-	if(rs.next()){
-		mySession = rs.getString("mySession");
-			
-	}
-	
-	if(mySession.equals("OFF")){
+	String loginMember = (String)session.getAttribute("loginMember");
+	System.out.println(loginMember + "<-- loginMember");
+	if(loginMember == null){
 		String errMsg = URLEncoder.encode("잘못된 접근입니다. 로그인 먼저 해주세요", "utf-8");
 		response.sendRedirect("/diary/loginForm.jsp?errMsg=" + errMsg);
-		//자원 반납
-		rs.close();
-		stmt.close();
-		conn.close();
+		
 		return;
+			
 	}
-	
-	
-	//if문 안걸릴 시 자원 반납
-	rs.close();
-	stmt.close();
 	
 	//요청값
 	String diaryDate = request.getParameter("diaryDate");
 	
 	System.out.println(diaryDate + "<-- modifyDiaryForm param diaryDate");
 	
-	String sql2 = "select title, weather, content from diary where diary_date = ?";
+	String sql = "select title, weather, content from diary where diary_date = ?";
 	
-	PreparedStatement stmt2 = null;
-	stmt2 = conn.prepareStatement(sql2);
-	stmt2.setString(1, diaryDate);
+	Class.forName("org.mariadb.jdbc.Driver");
+	Connection conn = DriverManager.getConnection("jdbc:mariadb://127.0.0.1:3306/diary", "root", "java1234");
+	PreparedStatement stmt = null;
+	stmt = conn.prepareStatement(sql);
+	stmt.setString(1, diaryDate);
 	//디버깅
-	System.out.println(stmt2);
-	ResultSet rs2 = null;
-	rs2 = stmt2.executeQuery();
+	System.out.println(stmt);
+	ResultSet rs = null;
+	rs = stmt.executeQuery();
 	
 	
 %>
@@ -111,8 +91,8 @@
 		<div class="mt-5 col-6 bg-white rounded">
 			<h1 class="mt-4 text-center"><%=diaryDate %> Modify</h1>
 			<%
-				if(rs2.next()){
-					String weather = rs2.getString("weather");
+				if(rs.next()){
+					String weather = rs.getString("weather");
 			%>
 			<form method="post" action="/diary/updateDiaryAction.jsp">
 				<div class="mb-3 mt-3">
@@ -138,7 +118,7 @@
 				</div>
 			  	<div class="mb-3">
 			    	<label class="form-label">Title :</label>
-			    	<input type="text" class="form-control" name="title" value="<%=rs2.getString("title") %>">
+			    	<input type="text" class="form-control" name="title" value="<%=rs.getString("title") %>">
 			  	</div>
 			  	
 			  	<div class="mb-3">
@@ -181,7 +161,7 @@
 				</div>
 			  	<div>
 					Content : 
-					<textarea rows="5" cols="50" class="form-control" name="content"><%=rs2.getString("content") %></textarea>
+					<textarea rows="5" cols="50" class="form-control" name="content"><%=rs.getString("content") %></textarea>
 				</div>
 				
 				<button type="submit" class="mt-3 mb-4 btn" style="background-color: #A3C6C4">수정</button>
@@ -189,8 +169,8 @@
 			<%
 				}
 			
-				rs2.close();
-				stmt2.close();
+				rs.close();
+				stmt.close();
 				conn.close();
 			%>
 		</div>

@@ -6,38 +6,16 @@
 <%@ page import="java.sql.*" %>
 <% 
 	//로그인(인증) 분기
-	// diary.login.my_session => "OFF" 일땐 redirect("loginForm.jsp")
-	
-	String sql = "SELECT my_session mySession FROM login";
-	
-	Class.forName("org.mariadb.jdbc.Driver");
-	Connection conn = DriverManager.getConnection("jdbc:mariadb://127.0.0.1:3306/diary", "root", "java1234");
-	PreparedStatement stmt = null;
-	stmt = conn.prepareStatement(sql);
-	ResultSet rs = null;
-	rs = stmt.executeQuery();
-	
-	String mySession = null;
-	
-	if(rs.next()){
-		mySession = rs.getString("mySession");
-			
-	}
-	
-	if(mySession.equals("OFF")){
+	String loginMember = (String)session.getAttribute("loginMember");
+	System.out.println(loginMember + "<-- loginMember");
+	if(loginMember == null){
 		String errMsg = URLEncoder.encode("잘못된 접근입니다. 로그인 먼저 해주세요", "utf-8");
 		response.sendRedirect("/diary/loginForm.jsp?errMsg=" + errMsg);
-		//자원 반납
-		rs.close();
-		stmt.close();
-		conn.close();
+		
 		return;
+			
 	}
-	
-	
-	//if문 안걸릴 시 자원 반납
-	rs.close();
-	stmt.close();
+
 	
 	//달력
 	Calendar calendar = Calendar.getInstance();
@@ -69,15 +47,18 @@
 	
 	int countDiv = startBlank + lastDate;
 	
-	String sql2 = "select diary_date diaryDate, day(diary_date) day, left(title, 5) title, feeling from diary where year(diary_date) = ? and month(diary_date) = ?";
-	PreparedStatement stmt2 = conn.prepareStatement(sql2);
-	stmt2.setInt(1, year);
-	stmt2.setInt(2, month+1);
-	//디버깅
-	System.out.println(stmt2);
+	String sql = "select diary_date diaryDate, day(diary_date) day, left(title, 5) title, feeling from diary where year(diary_date) = ? and month(diary_date) = ?";
 	
-	ResultSet rs2 = null;
-	rs2 = stmt2.executeQuery();
+	Class.forName("org.mariadb.jdbc.Driver");
+	Connection conn = DriverManager.getConnection("jdbc:mariadb://127.0.0.1:3306/diary", "root", "java1234");
+	PreparedStatement stmt = conn.prepareStatement(sql);
+	stmt.setInt(1, year);
+	stmt.setInt(2, month+1);
+	//디버깅
+	System.out.println(stmt);
+	
+	ResultSet rs = null;
+	rs = stmt.executeQuery();
 	
 	
 %>
@@ -212,20 +193,20 @@
 									<%=i-startBlank%>
 							<%		
 									
-									while(rs2.next()){
-										if(rs2.getInt("day") == i-startBlank){
+									while(rs.next()){
+										if(rs.getInt("day") == i-startBlank){
 							%>
 											<div>
-												<span><%=rs2.getString("feeling") %></span>
-												<a href='/diary/diaryOne.jsp?diaryDate=<%=rs2.getString("diaryDate")%>'>
-													<%=rs2.getString("title") %>...
+												<span><%=rs.getString("feeling") %></span>
+												<a href='/diary/diaryOne.jsp?diaryDate=<%=rs.getString("diaryDate")%>'>
+													<%=rs.getString("title") %>...
 												</a>
 											</div>
 							<%
 											break;
 										}
 									}
-									rs2.beforeFirst();
+									rs.beforeFirst();
 								} else {
 							%>
 									&nbsp;
@@ -242,8 +223,8 @@
 	</div>
 	<%
 		//자원반납
-		rs2.close();
-		stmt2.close();
+		rs.close();
+		stmt.close();
 		conn.close();
 	%>
 </body>

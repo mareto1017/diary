@@ -7,37 +7,16 @@
 <%@page import="java.net.URLEncoder"%>
 <% 
 	//로그인(인증) 분기
-
-	String sql = "SELECT my_session mySession FROM login";
-	
-	Class.forName("org.mariadb.jdbc.Driver");
-	Connection conn = DriverManager.getConnection("jdbc:mariadb://127.0.0.1:3306/diary", "root", "java1234");
-	PreparedStatement stmt = null;
-	stmt = conn.prepareStatement(sql);
-	ResultSet rs = null;
-	rs = stmt.executeQuery();
-	
-	String mySession = null;
-	
-	if(rs.next()){
-		mySession = rs.getString("mySession");
+	String loginMember = (String)session.getAttribute("loginMember");
+	System.out.println(loginMember + "<-- loginMember");
+	if(loginMember == null){
+		String errMsg = URLEncoder.encode("잘못된 접근입니다. 로그인 먼저 해주세요", "utf-8");
+		response.sendRedirect("/diary/loginForm.jsp?errMsg=" + errMsg);
+		
+		return;
 			
 	}
 	
-	if(mySession.equals("OFF")){
-		String errMsg = URLEncoder.encode("잘못된 접근입니다. 로그인 먼저 해주세요", "utf-8");
-		response.sendRedirect("/diary/loginForm.jsp?errMsg=" + errMsg);
-		//자원 반납
-		rs.close();
-		stmt.close();
-		conn.close();
-		return;
-	}
-	
-	
-	//if문 안걸릴 시 자원 반납
-	rs.close();
-	stmt.close();
 	
 	String lunchDate = request.getParameter("lunchDate");
 	//디버깅
@@ -50,13 +29,15 @@
 		String today = now.format(formatter);
 		lunchDate = today;
 	}
-	String sql2 = "select menu from lunch where lunch_date = ?";
-	PreparedStatement stmt2 = null;
-	stmt2 = conn.prepareStatement(sql2);
-	stmt2.setString(1, lunchDate);
-	System.out.println(stmt2);
-	ResultSet rs2 = null;
-	rs2 = stmt2.executeQuery();
+	String sql = "select menu from lunch where lunch_date = ?";
+	Class.forName("org.mariadb.jdbc.Driver");
+	Connection conn = DriverManager.getConnection("jdbc:mariadb://127.0.0.1:3306/diary", "root", "java1234");
+	PreparedStatement stmt = null;
+	stmt = conn.prepareStatement(sql);
+	stmt.setString(1, lunchDate);
+	System.out.println(stmt);
+	ResultSet rs = null;
+	rs = stmt.executeQuery();
 	
  	
 %>
@@ -128,11 +109,11 @@
 			</form>
 			
 			<%
-				if(rs2.next()){
+				if(rs.next()){
 			%>
 					<div class="mt-4 text-center">
 						<div><h1><%=lunchDate %> 의 점심 </h1></div>
-						<div class="mt-5 mb-5"><h2><%=rs2.getString("menu") %></h2></div>
+						<div class="mt-5 mb-5"><h2><%=rs.getString("menu") %></h2></div>
 					</div>
 			
 			

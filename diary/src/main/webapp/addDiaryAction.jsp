@@ -4,38 +4,15 @@
 <%@page import="java.net.URLEncoder"%>
 <% 
 	//로그인(인증) 분기
-
-	String sql = "SELECT my_session mySession FROM login";
-	
-	Class.forName("org.mariadb.jdbc.Driver");
-	Connection conn = DriverManager.getConnection("jdbc:mariadb://127.0.0.1:3306/diary", "root", "java1234");
-	PreparedStatement stmt = null;
-	stmt = conn.prepareStatement(sql);
-	ResultSet rs = null;
-	rs = stmt.executeQuery();
-	
-	String mySession = null;
-	
-	if(rs.next()){
-		mySession = rs.getString("mySession");
-			
-	}
-	
-	if(mySession.equals("OFF")){
+	String loginMember = (String)session.getAttribute("loginMember");
+	System.out.println(loginMember + "<-- loginMember");
+	if(loginMember == null){
 		String errMsg = URLEncoder.encode("잘못된 접근입니다. 로그인 먼저 해주세요", "utf-8");
 		response.sendRedirect("/diary/loginForm.jsp?errMsg=" + errMsg);
-		//자원 반납
-		rs.close();
-		stmt.close();
-		conn.close();
+		
 		return;
+			
 	}
-	
-	
-	//if문 안걸릴 시 자원 반납
-	rs.close();
-	stmt.close();
-	
 	
 	String diaryDate = request.getParameter("diaryDate");
 	String feeling = request.getParameter("feeling");
@@ -50,21 +27,22 @@
 	System.out.println(weather + " <-- addDiaryAction param weather");
 	System.out.println(content + " <-- addDiaryAction param content");
 	
-	String sql2 = "insert into diary (diary_date, feeling, title, weather, content, update_date, create_date) values (?, ?, ?, ?, ?, now(), now());";
-	
-	PreparedStatement stmt2 = null;
-	stmt2 = conn.prepareStatement(sql2);
-	stmt2.setString(1, diaryDate);
-	stmt2.setString(2, feeling);
-	stmt2.setString(3, title);
-	stmt2.setString(4, weather);
-	stmt2.setString(5, content);
+	String sql = "insert into diary (diary_date, feeling, title, weather, content, update_date, create_date) values (?, ?, ?, ?, ?, now(), now());";
+	Class.forName("org.mariadb.jdbc.Driver");
+	Connection conn = DriverManager.getConnection("jdbc:mariadb://127.0.0.1:3306/diary", "root", "java1234");
+	PreparedStatement stmt = null;
+	stmt = conn.prepareStatement(sql);
+	stmt.setString(1, diaryDate);
+	stmt.setString(2, feeling);
+	stmt.setString(3, title);
+	stmt.setString(4, weather);
+	stmt.setString(5, content);
 	
 	//디버깅
-	System.out.println(stmt2);
+	System.out.println(stmt);
 	
 	int row = 0;
-	row = stmt2.executeUpdate();
+	row = stmt.executeUpdate();
 	
 	if(row == 1){
 		// 입력 성공
@@ -76,6 +54,6 @@
 		response.sendRedirect("/diary/addDiaryForm.jsp");
 	}
 	
-	stmt2.close();
+	stmt.close();
 	conn.close();
 %>

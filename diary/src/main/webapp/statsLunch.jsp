@@ -4,45 +4,23 @@
 <%@page import="java.net.URLEncoder"%>
 <% 
 	//로그인(인증) 분기
-
-	String sql = "SELECT my_session mySession FROM login";
+	String loginMember = (String)session.getAttribute("loginMember");
+	System.out.println(loginMember + "<-- loginMember");
+	if(loginMember == null){
+		String errMsg = URLEncoder.encode("잘못된 접근입니다. 로그인 먼저 해주세요", "utf-8");
+		response.sendRedirect("/diary/loginForm.jsp?errMsg=" + errMsg);
+		
+		return;
+			
+	}	
 	
+	String sql = "SELECT menu, COUNT(*) cnt FROM lunch GROUP BY menu;";
 	Class.forName("org.mariadb.jdbc.Driver");
 	Connection conn = DriverManager.getConnection("jdbc:mariadb://127.0.0.1:3306/diary", "root", "java1234");
 	PreparedStatement stmt = null;
 	stmt = conn.prepareStatement(sql);
 	ResultSet rs = null;
 	rs = stmt.executeQuery();
-	
-	String mySession = null;
-	
-	if(rs.next()){
-		mySession = rs.getString("mySession");
-			
-	}
-	
-	if(mySession.equals("OFF")){
-		String errMsg = URLEncoder.encode("잘못된 접근입니다. 로그인 먼저 해주세요", "utf-8");
-		response.sendRedirect("/diary/loginForm.jsp?errMsg=" + errMsg);
-		//자원 반납
-		rs.close();
-		stmt.close();
-		conn.close();
-		return;
-	}
-	
-	
-	//if문 안걸릴 시 자원 반납
-	rs.close();
-	stmt.close();
-	
-	
-	
-	String sql2 = "SELECT menu, COUNT(*) cnt FROM lunch GROUP BY menu;";
-	PreparedStatement stmt2 = null;
-	stmt2 = conn.prepareStatement(sql2);
-	ResultSet rs2 = null;
-	rs2 = stmt2.executeQuery();
 	
 %>
 <!DOCTYPE html>
@@ -104,8 +82,8 @@
 			<%
 					int maxHeight = 300;
 					int totalCnt = 0;
-					while(rs2.next()){
-						totalCnt += rs2.getInt("cnt");
+					while(rs.next()){
+						totalCnt += rs.getInt("cnt");
 					}
 			%>
 			<h1 class="mt-4">Stats Lunch</h1>
@@ -119,14 +97,14 @@
 						String[] c = {"#FF0000", "#FF5E00", "#FFE400", "#1DDB16", "#0054FF"};
 					
 						int i = 0;
-						rs2.beforeFirst();
+						rs.beforeFirst();
 						
-						while(rs2.next()){
-							int h = maxHeight *  rs2.getInt("cnt") / totalCnt;
+						while(rs.next()){
+							int h = maxHeight *  rs.getInt("cnt") / totalCnt;
 					%>
 							<td style="vertical-align: bottom">
 								<div style="height: <%=h %>px; width: 40px; background-color: <%=c[i] %>; text-align: center;">
-									<%=rs2.getInt("cnt") %>
+									<%=rs.getInt("cnt") %>
 								</div>
 							</td>	
 					<%
@@ -136,11 +114,11 @@
 				</tr>
 				<tr>
 					<%
-						rs2.beforeFirst();
+						rs.beforeFirst();
 						
-						while(rs2.next()){
+						while(rs.next()){
 					%>
-							<td><%=rs2.getString("menu") %></td>
+							<td><%=rs.getString("menu") %></td>
 					<%
 						}
 					%>
@@ -151,8 +129,8 @@
 	</div>
 	<%
 		//자원반납
-		rs2.close();
-		stmt2.close();
+		rs.close();
+		stmt.close();
 		conn.close();
 	%>
 </body>

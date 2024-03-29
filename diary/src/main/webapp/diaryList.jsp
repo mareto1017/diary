@@ -4,37 +4,17 @@
 <%@page import="java.net.URLEncoder"%>
 <% 
 	//로그인(인증) 분기
-
-	String sql = "SELECT my_session mySession FROM login";
-	
-	Class.forName("org.mariadb.jdbc.Driver");
-	Connection conn = DriverManager.getConnection("jdbc:mariadb://127.0.0.1:3306/diary", "root", "java1234");
-	PreparedStatement stmt = null;
-	stmt = conn.prepareStatement(sql);
-	ResultSet rs = null;
-	rs = stmt.executeQuery();
-	
-	String mySession = null;
-	
-	if(rs.next()){
-		mySession = rs.getString("mySession");
+	String loginMember = (String)session.getAttribute("loginMember");
+	System.out.println(loginMember + "<-- loginMember");
+	if(loginMember == null){
+		String errMsg = URLEncoder.encode("잘못된 접근입니다. 로그인 먼저 해주세요", "utf-8");
+		response.sendRedirect("/diary/loginForm.jsp?errMsg=" + errMsg);
+		
+		return;
 			
 	}
 	
-	if(mySession.equals("OFF")){
-		String errMsg = URLEncoder.encode("잘못된 접근입니다. 로그인 먼저 해주세요", "utf-8");
-		response.sendRedirect("/diary/loginForm.jsp?errMsg=" + errMsg);
-		//자원 반납
-		rs.close();
-		stmt.close();
-		conn.close();
-		return;
-	}
-	
-	
-	//if문 안걸릴 시 자원 반납
-	rs.close();
-	stmt.close();
+
 	
 	//요청값
 	String search = request.getParameter("search");
@@ -53,30 +33,32 @@
 	//	rowPerPage = Integer.parseInt(request.getParameter("rowPerPage"));
 	//}
 	
-	String sql2 = null;
+	String sql = null;
 	int startRow = (currentPage-1) * rowPerPage;
-	sql2 = "select diary_date diaryDate, title from diary where title like ? order by diary_date desc limit ?, ?";
+	sql = "select diary_date diaryDate, title from diary where title like ? order by diary_date desc limit ?, ?";
+	Class.forName("org.mariadb.jdbc.Driver");
+	Connection conn = DriverManager.getConnection("jdbc:mariadb://127.0.0.1:3306/diary", "root", "java1234");
+	PreparedStatement stmt = null;
+	stmt = conn.prepareStatement(sql);
+	stmt.setString(1, "%" + search + "%");
+	stmt.setInt(2, startRow);
+	stmt.setInt(3, rowPerPage);
+	//디버깅
+	System.out.println(stmt);
+	ResultSet rs = null;
+	rs = stmt.executeQuery();
+	
+	String sql2 = "select count(*) cnt from diary where title like ?";
 	PreparedStatement stmt2 = null;
 	stmt2 = conn.prepareStatement(sql2);
 	stmt2.setString(1, "%" + search + "%");
-	stmt2.setInt(2, startRow);
-	stmt2.setInt(3, rowPerPage);
-	//디버깅
 	System.out.println(stmt2);
 	ResultSet rs2 = null;
 	rs2 = stmt2.executeQuery();
 	
-	String sql3 = "select count(*) cnt from diary where title like ?";
-	PreparedStatement stmt3 = null;
-	stmt3 = conn.prepareStatement(sql3);
-	stmt3.setString(1, "%" + search + "%");
-	System.out.println(stmt3);
-	ResultSet rs3 = null;
-	rs3 = stmt3.executeQuery();
-	
 	int count = 0;
-	if(rs3.next()){
-		 count = rs3.getInt("cnt");
+	if(rs2.next()){
+		 count = rs2.getInt("cnt");
 	}
 	
 	int lastPage = 0;
@@ -150,9 +132,9 @@
 						<th>제목</th>
 				</tr>
 				<%
-					while(rs2.next()){
-						String diaryDate = rs2.getString("diaryDate");
-						String title = rs2.getString("title");				
+					while(rs.next()){
+						String diaryDate = rs.getString("diaryDate");
+						String title = rs.getString("title");				
 				%>
 						<tr class="mb-3">
 							<td><%=diaryDate %></td>
@@ -200,10 +182,10 @@
 	</div>
 	<%
 		//자원반납
+		rs.close();
+		stmt.close();
 		rs2.close();
 		stmt2.close();
-		rs3.close();
-		stmt3.close();
 		conn.close();
 	%>
 </body>
