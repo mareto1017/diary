@@ -30,6 +30,15 @@
 	ResultSet rs = null;
 	rs = stmt.executeQuery();
 	
+	String sql2 = "select comment_no commentNo, memo, create_date createDate from comment where diary_date = ?";
+	
+	PreparedStatement stmt2 = null;
+	stmt2 = conn.prepareStatement(sql2);
+	stmt2.setString(1, diaryDate);
+	//디버깅
+	System.out.println(stmt2);
+	ResultSet rs2 = null;
+	rs2 = stmt2.executeQuery();
 	
 %>
 <!DOCTYPE html>
@@ -129,17 +138,54 @@
 			<%
 				}
 				
-				rs.close();
-				stmt.close();
-				conn.close();
-			%>
+							%>
 				<div class="mb-4">
 					<a href="/diary/updateDiaryForm.jsp?diaryDate=<%=diaryDate%>" class="mt-3 btn" style="background-color: #A3C6C4">수정</a>
 					<a href="/diary/deleteDiary.jsp?diaryDate=<%=diaryDate%>" class="mt-3 btn" style="background-color: #A3C6C4">삭제</a>
 				</div>
+				
+				<!-- 댓글 작성 form -->
+				<div class="mt-3 fs-4">댓글</div>
+				<form method="post" action="/diary/insertComment.jsp">
+					<input type="hidden" name="diaryDate" value="<%=diaryDate %>" >
+					<div class="input-group">
+						<textarea rows="3" class="m-2 form-control" name="memo"></textarea>
+					</div>
+					<button type="submit" class="ms-2 mt-3 btn" style="background-color: #A3C6C4">댓글 입력</button>
+				</form>
+				
+				<hr>
+				
+					<!-- 댓글 목록 -->
+			<%
+				while(rs2.next()){
+			%>
+					
+					<div>
+						<div>
+							<%=rs2.getString("memo") %>
+						</div>
+						<div class="position-relative">
+							<a href="/diary/deleteComment.jsp?commentNo=<%=rs2.getInt("commentNo") %>&diaryDate=<%=diaryDate%>" class="btn-close position-absolute top-50 end-0 translate-middle-y me-3" aria-label="Close"></a>
+						</div>
+					</div>
+					<div><%=rs2.getString("createDate") %></div>
+					<hr>
+			<%
+				}
+			%>
+					
 		</div>
 		<div class="col"></div>
 	</div>
+	<%
+		rs.close();
+		stmt.close();
+		rs2.close();
+		stmt2.close();
+		conn.close();
+	
+	%>
 
 </body>
 </html>
